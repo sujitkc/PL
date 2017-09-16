@@ -1,0 +1,11 @@
+FunDef
+======
+env |- (fun vname -> body) --> closure(vname, body, env)
+
+FunApp
+======
+env            |- e1 --> closure(vname, body, env')
+env            |- e2 --> v2
+env'[vname=v2] |- body --> v
+---------------------------------------------------
+env |- e1 e2 --> v

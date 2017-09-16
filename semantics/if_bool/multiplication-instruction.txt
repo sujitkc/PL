@@ -1,0 +1,7 @@
+To add multiplication to the language
+=======================================
+parser.mly: Add token MULTIPLY
+expression.mli, expression.ml: Add a Multiply constructor to the expr type.
+parser.mly: Add a rule to the grammer to handle multiplication.
+lexer.mll: Add a rule to return MULTIPLY on seeing *
+expression.ml: Make appropriate modification to the eval function.

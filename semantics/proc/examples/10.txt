@@ -1,0 +1,1 @@
+let x = (fun y -> 2 + y) in let y = (fun a -> x) in ((y 2))

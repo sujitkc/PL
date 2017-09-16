@@ -1,0 +1,9 @@
+  let x = 200
+  in
+    let f = fun z -> z - x
+    in
+      let x = 100
+      in
+        let g = fun z -> z - x
+        in
+        f 1 - g 1

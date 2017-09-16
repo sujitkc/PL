@@ -1,0 +1,6 @@
+if true then 1 else 2
+
+e1 --> v1 e2 --> v2
+-----------------------
+if b then e1 else e2 --> v1 if b = true
+if b then e1 else e2 --> v2 if b = false

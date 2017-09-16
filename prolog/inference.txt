@@ -1,0 +1,17 @@
+for all Z if mother(X, Z) and father(Y, Z) ==> wife(X, Y)
+
+wife(sita, ram).
+matches: wife(X,Y) :- mother(X,Z),father(Y,Z).
+X = sita
+Y = ram
+
+mother(sita, Z).
+matches: mother(sita, luv).
+Z = luv
+
+father(ram, luv).
+finds a match.
+
+answer is true.
+
+
