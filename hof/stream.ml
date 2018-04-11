@@ -23,9 +23,17 @@ let tl = function
 
 let rec ns n = Cons(n, fun () -> ns n)
 
+
+
 (*
 A stream of 2's
 ---------------
+
+
+
+
+
+
 # let s = ns 2;;    
 val s : int mystream = Cons (2, <fun>)
 # let s = tl s ();;
