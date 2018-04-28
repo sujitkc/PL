@@ -1,0 +1,6 @@
+int x;
+boolean y;
+
+int f() {
+  x := 1;
+}

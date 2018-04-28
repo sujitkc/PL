@@ -30,6 +30,7 @@ let rec eval e env : Expression.type_let2 =
     (
       match ((eval b env), (eval e1 env), (eval e2 env)) with
         Expression.Boolean, Expression.Integer, Expression.Integer -> Expression.Integer
+      | Expression.Boolean, Expression.Boolean, Expression.Boolean -> Expression.Boolean
       | _                                                           -> raise (TypeError("Type error in " ^ (string_of_expr e)))
     )
   | Expression.Let(vname, e1, e2) ->

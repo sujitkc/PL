@@ -55,3 +55,12 @@ let rec infix_of_exp = function
       "(" ^ (infix_of_exp e1) ^
       (string_of_op o) ^
       (infix_of_exp e2) ^ ")"
+
+let rec evaluate = function
+    Num(n) -> n
+  | BinTerm(o, e1, e2) ->
+    (
+      match o with
+        DIV -> (evaluate e1) / (evaluate e2)
+      | PLUS -> (evaluate e1) + (evaluate e2)
+    )

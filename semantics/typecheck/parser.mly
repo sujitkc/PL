@@ -28,7 +28,9 @@ expr :
   | expr AND expr { Expression.And($1, $3) }
   | expr OR expr { Expression.Or($1, $3) }
   | NOT expr { Expression.Not($2) }
- | LET ID EQ expr IN expr           { Expression.Let($2, $4, $6) }
+  | expr EQ expr {Expression.Equals($1, $3) }
+  | LET ID EQ expr IN expr           { Expression.Let($2, $4, $6) }
+  | LPAREN expr RPAREN               { $2 }
 ;
 
 /*
