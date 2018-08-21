@@ -15,9 +15,13 @@
 
 %start prog
 
-%left ADD SUBTRACT
-%left AND OR
+%left ADD
+%left SUBTRACT
+%left AND
+%left OR
 %right NOT
+%left RPAREN
+%left LPAREN
 
 %% /* Grammar rules and actions follow */
 
@@ -30,8 +34,8 @@ prog : decls fundefs {
   ;
 
 decls :
-  nonemptydecls                    { List.rev $1 }
-  |                                  { []          }
+  LBRACE nonemptydecls RBRACE        { List.rev $2 }
+  | LBRACE RBRACE                    { []          }
   ;
 
 nonemptydecls :
@@ -39,7 +43,7 @@ nonemptydecls :
   | decl                             { [ $1 ]    }
   ;
   
-decl : TYPE ID SEMICOLON                   { ($2, $1) }
+decl : TYPE ID SEMICOLON %prec RPAREN                  { ($2, $1) }
   ;
 
 fundefs :
@@ -52,12 +56,12 @@ nonemptyfundefs :
   | fundef                             { [ $1 ]    }
   ;
   
-fundef : TYPE ID LPAREN paramlist RPAREN stmt  {
+fundef : TYPE ID LPAREN paramlist RPAREN LBRACE stmts RBRACE {
     {
       Expression.Program.fname  = $2;
       Expression.Program.rtype  = $1;
       Expression.Program.params = $4;
-      Expression.Program.body   = $6;
+      Expression.Program.body   = Expression.Program.Block($7);
     }
   }
   ;
@@ -73,7 +77,7 @@ nonemptyparamlist :
   ;
 
 param :
-    TYPE ID                          { ($2, $1)                     }
+    TYPE ID %prec LPAREN             { ($2, $1)                     }
   ;
   
 stmts :

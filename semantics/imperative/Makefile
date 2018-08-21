@@ -1,11 +1,11 @@
 evaluate : env.cmx expression.cmx parser.cmx lexer.cmx evaluate.cmx interpreter.cmx
-	ocamlopt -o evaluate expression.cmx env.cmx interpreter.cmx parser.cmx lexer.cmx evaluate.cmx 
+	ocamlopt -o evaluate expression.cmx parser.cmx lexer.cmx env.cmx interpreter.cmx evaluate.cmx 
 
 parser.ml : parser.mly
 	ocamlyacc parser.mly
 
 parser.mli : parser.mly
-	ocamlyacc parser.mly
+	ocamlyacc -v parser.mly
 
 lexer.ml : lexer.mll parser.mli
 	ocamllex lexer.mll
