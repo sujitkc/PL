@@ -62,7 +62,7 @@ let process_char (input : char Mystream.mystream) ((tok, st) : token * State.sta
 (*  print_string ("char = " ^ (string_of_char (Mystream.hd input)) ^ "\n"); *)
   match st with
     State.Terminate(_) -> failwith "Can't process terminated scanner."
-  | State.State(fsa)   -> (tok, (fsa input))
+  | State.State(fsa)   -> (tok, (fsa input)) (* return the token consumed and the new FSA state *)
 
 (* 
   The lexer begins by:
@@ -87,7 +87,8 @@ let process_char (input : char Mystream.mystream) ((tok, st) : token * State.sta
 let lexer (s : (char Mystream.mystream)) : token * (char Mystream.mystream) =
   let rec iter (data : lexer_data) : lexer_data =
     match data.scanners with
-      [] -> data
+      [] -> data (* if no scanners are passed from the previous iteration, 
+                    return the current data containing the longest token recognised so far *)
     | _  -> 
       let new_fsas   = List.map (process_char data.current_input) data.scanners in
       let successes  = select_success    new_fsas

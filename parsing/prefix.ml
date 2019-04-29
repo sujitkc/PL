@@ -18,6 +18,30 @@ let rec string_of_list = function
     [] -> ""
   | h :: t -> h ^ "; " ^ (string_of_list t)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let rec parse_prefix p =
   match p with
     [] -> raise (ParseError "premature end of string")
@@ -64,3 +88,39 @@ let rec evaluate = function
         DIV -> (evaluate e1) / (evaluate e2)
       | PLUS -> (evaluate e1) + (evaluate e2)
     )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let t e =
+  let (ast, _) = parse_prefix e in
+  let infix = infix_of_exp ast in (print_endline ("infix = " ^ infix));
+  let value = evaluate ast in (print_endline ("value = " ^ (string_of_int value)))
+
+
+let t1 () =
+  let e = [Op(PLUS); NUM(1); NUM(2)] in (t e)

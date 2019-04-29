@@ -14,6 +14,34 @@ type lambda =
   | Abstraction of (string * lambda)
   | Application of (lambda * lambda)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 let rec parse_lambda lst =
   try
     parse_abstraction lst
@@ -50,6 +78,43 @@ and    parse_application = function
         | _ -> failwith ""
       )
   | _ -> failwith ""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 (*
   input : ""

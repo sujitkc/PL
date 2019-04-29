@@ -8,6 +8,11 @@ len([_ | T], N) :- len(T, X), N is X + 1.
 not(mem(_,[])).
 mem(X,[H|_]) :- X == H.
 mem(X,[_|List]) :-  mem(X,List).
+
+
+
+
+
 % append - To append two lists.
 
 append([], List, List).

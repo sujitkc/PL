@@ -62,4 +62,4 @@ let rec eval e env : Expression.expr =
       let (par, body, env') = (Expression.getClosureValue e') and arg' = (eval arg env) in
       let env'' = (Expression.addBinding par arg' env') in
         (eval body env'')
-  | Expression.RecFunDef(par, body)           -> Expression.RecClosure(par, body, env)  
+  | Expression.RecFunDef(par, body)           -> Expression.RecClosure(par, body, env)

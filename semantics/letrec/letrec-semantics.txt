@@ -25,6 +25,6 @@ env |- (let rec vname = fun arg -> body in e1) --> v
 ApplyFound
 =====
  env |- x --> RecClosure(par, body, env')
--------------------------------------------
+---------------------------------------------------------
  apply(x, env) --> env'[x = RecClosure(par, body, env')]
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 

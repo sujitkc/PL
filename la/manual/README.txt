@@ -60,7 +60,7 @@ Integrating with Lexer
     ]
    Please note that the position that you choose for TOK in the above list has implication on how the lexer identifies the tokens. Conflicts between two token types are resolved in favour of the one appearing earlier in the list above.
 
-- Makefile: Following rules have to be added modified (i.e. appropriate dependencies have to be added to the rules): lexer.cmx, lexer.cmi, test_lexer.cmx, lexer, clean.
+- Makefile: Following rules have to be modified (i.e. appropriate dependencies have to be added to the rules): lexer.cmx, lexer.cmi, test_lexer.cmx, lexer, clean.
 - System testing:
   * Add appropriate test cases in the test_lexer.ml file.
   * Build the whole system and test as follows:
