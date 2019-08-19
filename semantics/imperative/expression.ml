@@ -36,23 +36,3 @@ module Program = struct
     fundefs : fundef list;
   }
 end
-
-(*
-module Program : ProgramType = struct
-  type stmt =
-    | Assignment of string * expr
-
-  type fundef = {
-    fname  : string;
-    rtype  : typ;
-    params : (string * typ) list;
-    body   : stmt;
-  }
-
-  type program = {
-    defs    : (string * typ) list;
-    fundefs : fundef list;
-  }
-end
-*)
-

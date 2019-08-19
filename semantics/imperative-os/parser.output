@@ -1,0 +1,1059 @@
+   0  $accept : %entry% $end
+
+   1  prog : decls fundefs stmt
+
+   2  decls : LBRACE nonemptydecls RBRACE
+   3        | LBRACE RBRACE
+
+   4  nonemptydecls : nonemptydecls decl
+   5                | decl
+
+   6  decl : TYPE ID SEMICOLON
+
+   7  fundefs : nonemptyfundefs
+   8          |
+
+   9  nonemptyfundefs : nonemptyfundefs fundef
+  10                  | fundef
+
+  11  fundef : TYPE ID LPAREN paramlist RPAREN LBRACE decls stmts RBRACE
+
+  12  paramlist : nonemptyparamlist
+  13            |
+
+  14  nonemptyparamlist : nonemptyparamlist COMMA param
+  15                    | param
+
+  16  param : TYPE ID
+
+  17  stmts : nonemptystmts
+  18        |
+
+  19  nonemptystmts : nonemptystmts stmt
+  20                | stmt
+
+  21  stmt : ID ASSIGN expr SEMICOLON
+  22       | RETURN expr SEMICOLON
+  23       | LBRACE decls stmts RBRACE
+
+  24  expr : ID
+  25       | INTEGER
+  26       | BOOLEAN
+  27       | expr ADD expr
+  28       | expr SUBTRACT expr
+  29       | IF expr THEN expr ELSE expr
+  30       | expr AND expr
+  31       | expr OR expr
+  32       | NOT expr
+  33       | expr EQ expr
+  34       | LET ID EQ expr IN expr
+  35       | LPAREN expr RPAREN
+  36       | ID LPAREN arglist RPAREN
+
+  37  arglist : nonemptyarglist
+  38          |
+
+  39  nonemptyarglist : nonemptyarglist COMMA arg
+  40                  | arg
+
+  41  arg : expr
+
+  42  %entry% : '\001' prog
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . prog  (42)
+
+	LBRACE  shift 3
+	.  error
+
+	prog  goto 4
+	decls  goto 5
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	decls : LBRACE . nonemptydecls RBRACE  (2)
+	decls : LBRACE . RBRACE  (3)
+
+	RBRACE  shift 6
+	TYPE  shift 7
+	.  error
+
+	nonemptydecls  goto 8
+	decl  goto 9
+
+
+state 4
+	%entry% : '\001' prog .  (42)
+
+	.  reduce 42
+
+
+state 5
+	prog : decls . fundefs stmt  (1)
+	fundefs : .  (8)
+
+	TYPE  shift 10
+	LBRACE  reduce 8
+	RETURN  reduce 8
+	ID  reduce 8
+
+	fundefs  goto 11
+	nonemptyfundefs  goto 12
+	fundef  goto 13
+
+
+state 6
+	decls : LBRACE RBRACE .  (3)
+
+	.  reduce 3
+
+
+state 7
+	decl : TYPE . ID SEMICOLON  (6)
+
+	ID  shift 14
+	.  error
+
+
+state 8
+	decls : LBRACE nonemptydecls . RBRACE  (2)
+	nonemptydecls : nonemptydecls . decl  (4)
+
+	RBRACE  shift 15
+	TYPE  shift 7
+	.  error
+
+	decl  goto 16
+
+
+state 9
+	nonemptydecls : decl .  (5)
+
+	.  reduce 5
+
+
+state 10
+	fundef : TYPE . ID LPAREN paramlist RPAREN LBRACE decls stmts RBRACE  (11)
+
+	ID  shift 17
+	.  error
+
+
+state 11
+	prog : decls fundefs . stmt  (1)
+
+	LBRACE  shift 18
+	RETURN  shift 19
+	ID  shift 20
+	.  error
+
+	stmt  goto 21
+
+
+state 12
+	fundefs : nonemptyfundefs .  (7)
+	nonemptyfundefs : nonemptyfundefs . fundef  (9)
+
+	TYPE  shift 10
+	LBRACE  reduce 7
+	RETURN  reduce 7
+	ID  reduce 7
+
+	fundef  goto 22
+
+
+state 13
+	nonemptyfundefs : fundef .  (10)
+
+	.  reduce 10
+
+
+state 14
+	decl : TYPE ID . SEMICOLON  (6)
+
+	SEMICOLON  shift 23
+	.  error
+
+
+state 15
+	decls : LBRACE nonemptydecls RBRACE .  (2)
+
+	.  reduce 2
+
+
+state 16
+	nonemptydecls : nonemptydecls decl .  (4)
+
+	.  reduce 4
+
+
+state 17
+	fundef : TYPE ID . LPAREN paramlist RPAREN LBRACE decls stmts RBRACE  (11)
+
+	LPAREN  shift 24
+	.  error
+
+
+state 18
+	stmt : LBRACE . decls stmts RBRACE  (23)
+
+	LBRACE  shift 3
+	.  error
+
+	decls  goto 25
+
+
+state 19
+	stmt : RETURN . expr SEMICOLON  (22)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 33
+
+
+state 20
+	stmt : ID . ASSIGN expr SEMICOLON  (21)
+
+	ASSIGN  shift 34
+	.  error
+
+
+state 21
+	prog : decls fundefs stmt .  (1)
+
+	.  reduce 1
+
+
+state 22
+	nonemptyfundefs : nonemptyfundefs fundef .  (9)
+
+	.  reduce 9
+
+
+state 23
+	decl : TYPE ID SEMICOLON .  (6)
+
+	.  reduce 6
+
+
+state 24
+	fundef : TYPE ID LPAREN . paramlist RPAREN LBRACE decls stmts RBRACE  (11)
+	paramlist : .  (13)
+
+	TYPE  shift 35
+	RPAREN  reduce 13
+
+	paramlist  goto 36
+	nonemptyparamlist  goto 37
+	param  goto 38
+
+
+state 25
+	stmt : LBRACE decls . stmts RBRACE  (23)
+	stmts : .  (18)
+
+	LBRACE  shift 18
+	RETURN  shift 19
+	ID  shift 20
+	RBRACE  reduce 18
+
+	stmt  goto 39
+	stmts  goto 40
+	nonemptystmts  goto 41
+
+
+state 26
+	expr : LPAREN . expr RPAREN  (35)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 42
+
+
+state 27
+	expr : IF . expr THEN expr ELSE expr  (29)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 43
+
+
+state 28
+	expr : LET . ID EQ expr IN expr  (34)
+
+	ID  shift 44
+	.  error
+
+
+state 29
+	expr : NOT . expr  (32)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 45
+
+
+state 30
+	expr : INTEGER .  (25)
+
+	.  reduce 25
+
+
+state 31
+	expr : ID .  (24)
+	expr : ID . LPAREN arglist RPAREN  (36)
+
+	LPAREN  shift 46
+	COMMA  reduce 24
+	RPAREN  reduce 24
+	SEMICOLON  reduce 24
+	THEN  reduce 24
+	ELSE  reduce 24
+	IN  reduce 24
+	ADD  reduce 24
+	SUBTRACT  reduce 24
+	EQ  reduce 24
+	AND  reduce 24
+	OR  reduce 24
+
+
+state 32
+	expr : BOOLEAN .  (26)
+
+	.  reduce 26
+
+
+state 33
+	stmt : RETURN expr . SEMICOLON  (22)
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	SEMICOLON  shift 47
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	.  error
+
+
+state 34
+	stmt : ID ASSIGN . expr SEMICOLON  (21)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 53
+
+
+state 35
+	param : TYPE . ID  (16)
+
+	ID  shift 54
+	.  error
+
+
+state 36
+	fundef : TYPE ID LPAREN paramlist . RPAREN LBRACE decls stmts RBRACE  (11)
+
+	RPAREN  shift 55
+	.  error
+
+
+state 37
+	paramlist : nonemptyparamlist .  (12)
+	nonemptyparamlist : nonemptyparamlist . COMMA param  (14)
+
+	COMMA  shift 56
+	RPAREN  reduce 12
+
+
+state 38
+	nonemptyparamlist : param .  (15)
+
+	.  reduce 15
+
+
+state 39
+	nonemptystmts : stmt .  (20)
+
+	.  reduce 20
+
+
+state 40
+	stmt : LBRACE decls stmts . RBRACE  (23)
+
+	RBRACE  shift 57
+	.  error
+
+
+state 41
+	stmts : nonemptystmts .  (17)
+	nonemptystmts : nonemptystmts . stmt  (19)
+
+	LBRACE  shift 18
+	RETURN  shift 19
+	ID  shift 20
+	RBRACE  reduce 17
+
+	stmt  goto 58
+
+
+state 42
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+	expr : LPAREN expr . RPAREN  (35)
+
+	RPAREN  shift 59
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	.  error
+
+
+state 43
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : IF expr . THEN expr ELSE expr  (29)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	THEN  shift 60
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	.  error
+
+
+state 44
+	expr : LET ID . EQ expr IN expr  (34)
+
+	EQ  shift 61
+	.  error
+
+
+45: shift/reduce conflict (shift 50, reduce 32) on EQ
+state 45
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : NOT expr .  (32)
+	expr : expr . EQ expr  (33)
+
+	EQ  shift 50
+	COMMA  reduce 32
+	RPAREN  reduce 32
+	SEMICOLON  reduce 32
+	THEN  reduce 32
+	ELSE  reduce 32
+	IN  reduce 32
+	ADD  reduce 32
+	SUBTRACT  reduce 32
+	AND  reduce 32
+	OR  reduce 32
+
+
+state 46
+	expr : ID LPAREN . arglist RPAREN  (36)
+	arglist : .  (38)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	RPAREN  reduce 38
+
+	expr  goto 62
+	arglist  goto 63
+	nonemptyarglist  goto 64
+	arg  goto 65
+
+
+state 47
+	stmt : RETURN expr SEMICOLON .  (22)
+
+	.  reduce 22
+
+
+state 48
+	expr : expr ADD . expr  (27)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 66
+
+
+state 49
+	expr : expr SUBTRACT . expr  (28)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 67
+
+
+state 50
+	expr : expr EQ . expr  (33)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 68
+
+
+state 51
+	expr : expr AND . expr  (30)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 69
+
+
+state 52
+	expr : expr OR . expr  (31)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 70
+
+
+state 53
+	stmt : ID ASSIGN expr . SEMICOLON  (21)
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	SEMICOLON  shift 71
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	.  error
+
+
+state 54
+	param : TYPE ID .  (16)
+
+	.  reduce 16
+
+
+state 55
+	fundef : TYPE ID LPAREN paramlist RPAREN . LBRACE decls stmts RBRACE  (11)
+
+	LBRACE  shift 72
+	.  error
+
+
+state 56
+	nonemptyparamlist : nonemptyparamlist COMMA . param  (14)
+
+	TYPE  shift 35
+	.  error
+
+	param  goto 73
+
+
+state 57
+	stmt : LBRACE decls stmts RBRACE .  (23)
+
+	.  reduce 23
+
+
+state 58
+	nonemptystmts : nonemptystmts stmt .  (19)
+
+	.  reduce 19
+
+
+state 59
+	expr : LPAREN expr RPAREN .  (35)
+
+	.  reduce 35
+
+
+state 60
+	expr : IF expr THEN . expr ELSE expr  (29)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 74
+
+
+state 61
+	expr : LET ID EQ . expr IN expr  (34)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 75
+
+
+state 62
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+	arg : expr .  (41)
+
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	COMMA  reduce 41
+	RPAREN  reduce 41
+
+
+state 63
+	expr : ID LPAREN arglist . RPAREN  (36)
+
+	RPAREN  shift 76
+	.  error
+
+
+state 64
+	arglist : nonemptyarglist .  (37)
+	nonemptyarglist : nonemptyarglist . COMMA arg  (39)
+
+	COMMA  shift 77
+	RPAREN  reduce 37
+
+
+state 65
+	nonemptyarglist : arg .  (40)
+
+	.  reduce 40
+
+
+66: shift/reduce conflict (shift 50, reduce 27) on EQ
+state 66
+	expr : expr . ADD expr  (27)
+	expr : expr ADD expr .  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	COMMA  reduce 27
+	RPAREN  reduce 27
+	SEMICOLON  reduce 27
+	THEN  reduce 27
+	ELSE  reduce 27
+	IN  reduce 27
+	ADD  reduce 27
+
+
+67: shift/reduce conflict (shift 50, reduce 28) on EQ
+state 67
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr SUBTRACT expr .  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	COMMA  reduce 28
+	RPAREN  reduce 28
+	SEMICOLON  reduce 28
+	THEN  reduce 28
+	ELSE  reduce 28
+	IN  reduce 28
+	ADD  reduce 28
+	SUBTRACT  reduce 28
+
+
+68: shift/reduce conflict (shift 48, reduce 33) on ADD
+68: shift/reduce conflict (shift 49, reduce 33) on SUBTRACT
+68: shift/reduce conflict (shift 50, reduce 33) on EQ
+68: shift/reduce conflict (shift 51, reduce 33) on AND
+68: shift/reduce conflict (shift 52, reduce 33) on OR
+state 68
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+	expr : expr EQ expr .  (33)
+
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	COMMA  reduce 33
+	RPAREN  reduce 33
+	SEMICOLON  reduce 33
+	THEN  reduce 33
+	ELSE  reduce 33
+	IN  reduce 33
+
+
+69: shift/reduce conflict (shift 50, reduce 30) on EQ
+state 69
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr AND expr .  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	EQ  shift 50
+	OR  shift 52
+	COMMA  reduce 30
+	RPAREN  reduce 30
+	SEMICOLON  reduce 30
+	THEN  reduce 30
+	ELSE  reduce 30
+	IN  reduce 30
+	ADD  reduce 30
+	SUBTRACT  reduce 30
+	AND  reduce 30
+
+
+70: shift/reduce conflict (shift 50, reduce 31) on EQ
+state 70
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr OR expr .  (31)
+	expr : expr . EQ expr  (33)
+
+	EQ  shift 50
+	COMMA  reduce 31
+	RPAREN  reduce 31
+	SEMICOLON  reduce 31
+	THEN  reduce 31
+	ELSE  reduce 31
+	IN  reduce 31
+	ADD  reduce 31
+	SUBTRACT  reduce 31
+	AND  reduce 31
+	OR  reduce 31
+
+
+state 71
+	stmt : ID ASSIGN expr SEMICOLON .  (21)
+
+	.  reduce 21
+
+
+state 72
+	fundef : TYPE ID LPAREN paramlist RPAREN LBRACE . decls stmts RBRACE  (11)
+
+	LBRACE  shift 3
+	.  error
+
+	decls  goto 78
+
+
+state 73
+	nonemptyparamlist : nonemptyparamlist COMMA param .  (14)
+
+	.  reduce 14
+
+
+state 74
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : IF expr THEN expr . ELSE expr  (29)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	ELSE  shift 79
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	.  error
+
+
+state 75
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+	expr : LET ID EQ expr . IN expr  (34)
+
+	IN  shift 80
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	.  error
+
+
+state 76
+	expr : ID LPAREN arglist RPAREN .  (36)
+
+	.  reduce 36
+
+
+state 77
+	nonemptyarglist : nonemptyarglist COMMA . arg  (39)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 62
+	arg  goto 81
+
+
+state 78
+	fundef : TYPE ID LPAREN paramlist RPAREN LBRACE decls . stmts RBRACE  (11)
+	stmts : .  (18)
+
+	LBRACE  shift 18
+	RETURN  shift 19
+	ID  shift 20
+	RBRACE  reduce 18
+
+	stmt  goto 39
+	stmts  goto 82
+	nonemptystmts  goto 41
+
+
+state 79
+	expr : IF expr THEN expr ELSE . expr  (29)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 83
+
+
+state 80
+	expr : LET ID EQ expr IN . expr  (34)
+
+	LPAREN  shift 26
+	IF  shift 27
+	LET  shift 28
+	NOT  shift 29
+	INTEGER  shift 30
+	ID  shift 31
+	BOOLEAN  shift 32
+	.  error
+
+	expr  goto 84
+
+
+state 81
+	nonemptyarglist : nonemptyarglist COMMA arg .  (39)
+
+	.  reduce 39
+
+
+state 82
+	fundef : TYPE ID LPAREN paramlist RPAREN LBRACE decls stmts . RBRACE  (11)
+
+	RBRACE  shift 85
+	.  error
+
+
+83: shift/reduce conflict (shift 48, reduce 29) on ADD
+83: shift/reduce conflict (shift 49, reduce 29) on SUBTRACT
+83: shift/reduce conflict (shift 50, reduce 29) on EQ
+83: shift/reduce conflict (shift 51, reduce 29) on AND
+83: shift/reduce conflict (shift 52, reduce 29) on OR
+state 83
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : IF expr THEN expr ELSE expr .  (29)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	COMMA  reduce 29
+	RPAREN  reduce 29
+	SEMICOLON  reduce 29
+	THEN  reduce 29
+	ELSE  reduce 29
+	IN  reduce 29
+
+
+84: shift/reduce conflict (shift 48, reduce 34) on ADD
+84: shift/reduce conflict (shift 49, reduce 34) on SUBTRACT
+84: shift/reduce conflict (shift 50, reduce 34) on EQ
+84: shift/reduce conflict (shift 51, reduce 34) on AND
+84: shift/reduce conflict (shift 52, reduce 34) on OR
+state 84
+	expr : expr . ADD expr  (27)
+	expr : expr . SUBTRACT expr  (28)
+	expr : expr . AND expr  (30)
+	expr : expr . OR expr  (31)
+	expr : expr . EQ expr  (33)
+	expr : LET ID EQ expr IN expr .  (34)
+
+	ADD  shift 48
+	SUBTRACT  shift 49
+	EQ  shift 50
+	AND  shift 51
+	OR  shift 52
+	COMMA  reduce 34
+	RPAREN  reduce 34
+	SEMICOLON  reduce 34
+	THEN  reduce 34
+	ELSE  reduce 34
+	IN  reduce 34
+
+
+state 85
+	fundef : TYPE ID LPAREN paramlist RPAREN LBRACE decls stmts RBRACE .  (11)
+
+	.  reduce 11
+
+
+State 45 contains 1 shift/reduce conflict.
+State 66 contains 1 shift/reduce conflict.
+State 67 contains 1 shift/reduce conflict.
+State 68 contains 5 shift/reduce conflicts.
+State 69 contains 1 shift/reduce conflict.
+State 70 contains 1 shift/reduce conflict.
+State 83 contains 5 shift/reduce conflicts.
+State 84 contains 5 shift/reduce conflicts.
+
+
+30 terminals, 19 nonterminals
+43 grammar rules, 86 states

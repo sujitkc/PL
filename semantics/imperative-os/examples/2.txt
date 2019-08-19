@@ -7,6 +7,6 @@ int f() {
   return x + 1;
 }
 
-boolean g(boolean x) {
+int g(boolean x) {
   return x;
 }

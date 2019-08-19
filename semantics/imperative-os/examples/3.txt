@@ -1,0 +1,16 @@
+{
+int x;
+boolean y;
+}
+int f() {
+  x := 1;
+  return x + 1;
+}
+
+int g(boolean x, int y) {
+  return f() + 2;
+}
+
+int h() {
+  return g(true, 1);
+}

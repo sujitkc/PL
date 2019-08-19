@@ -183,7 +183,24 @@ let typecheck_fundef
       let paramtypes = List.map (
         fun (x, y) -> y
       ) fd.Expression.Program.params in
-      (paramtypes, fd.Expression.Program.rtype)
+      let rec add_params_to_env env = function
+        [] -> env
+      | (x, y) :: t -> (add_params_to_env (Env.addBinding x y env) t)
+      in
+      let env' = (add_params_to_env env fd.Expression.Program.params) in
+      let body_type = (typecheck_stmt fd.Expression.Program.body env' fenv) in
+      match body_type with
+        Some(bt) ->
+          if bt = fd.Expression.Program.rtype then
+            (paramtypes, fd.Expression.Program.rtype)
+          else
+            raise (TypeError("Type error in function body " ^
+              fd.Expression.Program.fname ^ " : " ^
+              "return type doesn't match the function body type."))
+      | None -> 
+            raise (TypeError("Type error in function body " ^
+              fd.Expression.Program.fname ^ " : " ^
+              "return type None."))
 
 let typecheck_fundefs (fdefs : Expression.Program.fundef list)
     (env : (string , Expression.typ) Env.env) :

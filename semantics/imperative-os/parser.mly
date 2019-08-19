@@ -10,7 +10,7 @@
 %token <bool>   BOOLEAN
 %token <Expression.typ>    TYPE
 
-%type <Expression.Program.program> prog
+%type <Expression.program> prog
 %type <Expression.expr> expr
 
 %start prog
@@ -25,10 +25,11 @@
 
 %% /* Grammar rules and actions follow */
 
-prog : decls fundefs {
+prog : decls fundefs stmt {
    {
-      Expression.Program.decls    = $1;
-      Expression.Program.fundefs = $2;
+      Expression.decls     = $1;
+      Expression.fundefs   = $2;
+      Expression.statement = $3;
     }
   }
   ;
@@ -56,12 +57,12 @@ nonemptyfundefs :
   | fundef                             { [ $1 ]    }
   ;
   
-fundef : TYPE ID LPAREN paramlist RPAREN LBRACE stmts RBRACE {
+fundef : TYPE ID LPAREN paramlist RPAREN LBRACE decls stmts RBRACE {
     {
-      Expression.Program.fname  = $2;
-      Expression.Program.rtype  = $1;
-      Expression.Program.params = $4;
-      Expression.Program.body   = Expression.Program.Block($7);
+      Expression.fname  = $2;
+      Expression.rtype  = $1;
+      Expression.params = $4;
+      Expression.body   = Expression.Block($7, $8);
     }
   }
   ;
@@ -91,9 +92,9 @@ nonemptystmts :
   ;
 
 stmt :
-    ID ASSIGN expr SEMICOLON         { Expression.Program.Assignment($1, $3) }
-  | RETURN expr SEMICOLON            { Expression.Program.Return($2)         }
-  | LBRACE stmts RBRACE              { Expression.Program.Block($2)          }
+    ID ASSIGN expr SEMICOLON         { Expression.Assignment($1, $3) }
+  | RETURN expr SEMICOLON            { Expression.Return($2)         }
+  | LBRACE decls stmts RBRACE        { Expression.Block($2, $3)      }
   ;
 
 expr :

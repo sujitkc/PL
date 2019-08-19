@@ -26,5 +26,5 @@ ApplyFound
 =====
  env |- x --> RecClosure(par, body, env')
 ---------------------------------------------------------
- apply(x, env) --> env'[x = RecClosure(par, body, env')]
+ apply(x, env) --> Closure(par, body, env'[x = RecClosure(par, body, env')])
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 

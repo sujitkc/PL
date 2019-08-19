@@ -12,7 +12,7 @@ let evaluate () =
     in
     begin
       print_string ("\n" ^ (Interpreter.string_of_program prog) ^ "\n");
-      let _ = (Interpreter.typecheck_prog prog) in
+      let _ = (Interpreter.evaluate_prog prog) in
       print_endline "sucess"
     end
   with
