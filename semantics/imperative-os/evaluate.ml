@@ -12,7 +12,12 @@ let evaluate () =
     in
     begin
       print_string ("\n" ^ (Interpreter.string_of_program prog) ^ "\n");
-      let _ = (Interpreter.evaluate_prog prog) in
+      let (v, env) = (Interpreter.evaluate_prog prog) in
+      begin
+        match v with
+          Some(e) ->  print_endline (Interpreter.string_of_expr e)
+        | None -> print_endline "None"
+      end;
       print_endline "sucess"
     end
   with

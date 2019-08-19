@@ -8,7 +8,7 @@ type ('a, 'b) environment =
 
 val empty_env : unit -> ('a, 'b) environment
 
-val add_marker : ('a, 'b) environment -> ('a, 'b) environment
+val enter_scope : ('a, 'b) environment -> ('a, 'b) environment
 
 val add_binding : 'a -> 'b -> ('a, 'b) environment -> ('a, 'b) environment
 

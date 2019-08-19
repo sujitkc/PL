@@ -10,7 +10,7 @@ type ('a, 'b) environment =
 
 let empty_env () = EmptyEnv
 
-let add_marker sigma =
+let enter_scope sigma =
   NonEmptyEnv(Marker, sigma)
 
 let add_binding x v sigma =

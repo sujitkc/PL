@@ -65,6 +65,8 @@ let string_of_program p =
   (List.fold_left
     (fun x y -> x ^ (string_of_fundef y) ^ "\n")
      "" p.Expression.fundefs)
+  ^
+  (string_of_stmt p.Expression.statement)
 
 
 let get_int_const_value e =
@@ -233,7 +235,7 @@ and evaluate_stmt stmt env fenv =
       end
   | Expression.Return(e) -> evaluate_expr e env fenv
   | Expression.Block(decls, stmt_list) ->
-      let env' = Environment.add_marker env in
+      let env' = Environment.enter_scope env in
       let env'' = evaluate_declarations decls env' in
       let (v, env''') = evaluate_stmtblock stmt_list env'' fenv in
       let env'''' = Environment.exit_scope env''' in
@@ -277,6 +279,7 @@ let evaluate_fundefs fdefs env =
    
 (* Evaluator - Program *)
 let evaluate_prog p =
-  let env = evaluate_declarations p.Expression.decls Environment.EmptyEnv in
-  let fenv = evaluate_fundefs p.Expression.fundefs env in
-    evaluate_stmt p.Expression.statement env fenv
+  let env = Environment.enter_scope Environment.EmptyEnv in
+  let env' = evaluate_declarations p.Expression.decls env in
+  let fenv = evaluate_fundefs p.Expression.fundefs env' in
+    evaluate_stmt p.Expression.statement env' fenv
