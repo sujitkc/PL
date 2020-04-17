@@ -1,1 +1,1 @@
-val keywd_in : char Mystream.mystream -> State.state
+val keywd_in : unit -> State.state * (char -> char option -> State.state) list

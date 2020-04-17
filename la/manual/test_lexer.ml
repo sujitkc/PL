@@ -1,9 +1,10 @@
 let test_lexer s =
+  let buffer = Mybuffer.from_string s in
   try
-    let (tok, _) = Lexer.lexer (Mystream.string_stream s) in
+    let tok = Lexer.lexer buffer in
     Printf.printf "%s -> true;\n" (Lexer.string_of_token tok)
   with
-    Failure(_) -> print_string (s ^ " -> false;\n")
+    Lexer.Lexical_error -> print_string (s ^ " -> false;\n")
 
 let test_lexers () =
   let inputs = [ "A"; "Bb"; "BbB"; "C1"; "Dd2"; "E3e"; "f4"; "5g"; "G_"; "6";

@@ -1,1 +1,1 @@
-val id : char Mystream.mystream -> State.state
+val id : unit -> State.state * (char -> char option -> State.state) list

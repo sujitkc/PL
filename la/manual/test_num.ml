@@ -5,13 +5,20 @@
   w.r.t. to the previous.
 *)
 let test_num s =
-  let stream = Mystream.string_stream s in
-  let rec iter f str =
-    let result = f str in
-      match result with
-        State.Terminate(b) -> s, b
-      | State.State(st) -> iter st ((Mystream.tl str) ())
-  in iter Num.num stream
+  let buffer = Mybuffer.from_string s in
+  let (init, accept_states) = Num.num () in
+  let rec loop sS = 
+    match sS with
+      State.Terminate(tf) -> tf
+    | State.State(s') ->
+        try
+          let c, la = buffer () in
+          loop (s' c la)
+        with
+          Mybuffer.End_of_buffer -> List.mem s' accept_states
+  in
+  s, (loop init)
+
 
 (*
   Function to run a test suite containing an arbitrary list of test inputs. Each test 

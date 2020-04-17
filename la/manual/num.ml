@@ -49,63 +49,49 @@
   See test_num.ml for usage information.
 *)
 
-let num (s : char Mystream.mystream) : State.state =
+(* Returns the initial state of the FSA and the list of accepting states *)
+let num () : State.state * ((char -> char option -> State.state) list) =
   let is_digit c = (c >= '0' && c <= '9') in
-  let rec one (stream : char Mystream.mystream) : State.state =
-    match stream with
-      Mystream.End -> State.Terminate(true)
-    | Mystream.Cons(c, _) ->
-        let lookahead = (Mystream.tl stream) () in
-        if (is_digit c) then
-          match lookahead with 
-            Mystream.Cons(c', _) ->
-              if (is_digit c') || (c' = '.') then
-                State.State(one)
-              else
-                State.Terminate(true)
-          | Mystream.End         -> State.Terminate(true)
-        else if c = '.' then
-          match lookahead with
-            Mystream.Cons(c', _) ->
-              if (is_digit c') then
-                State.State(two)
-              else
-                State.Terminate(false)
-          | Mystream.End         -> State.Terminate(false)
-        else
-          State.Terminate(false)
-  and two (stream : char Mystream.mystream) : State.state =
-    match stream with
-      Mystream.End -> State.Terminate(false)
-    | Mystream.Cons(c, _) ->
-        let lookahead = (Mystream.tl stream) () in
-        if (is_digit c) then
-          match lookahead with 
-            Mystream.Cons(c', _) ->
-              if (is_digit c') then
-                State.State(three)
-              else
-                State.Terminate(true)
-          | Mystream.End         -> State.Terminate(true)
-        else
-          State.Terminate(false)
-  and three (stream : char Mystream.mystream) : State.state =
-    match stream with
-      Mystream.End -> State.Terminate(true)
-    | Mystream.Cons(c, _) ->
-        let lookahead = (Mystream.tl stream) () in
-        if (is_digit c) then
-           match lookahead with 
-            Mystream.Cons(c', _) ->
-              if (is_digit c') then
-                State.State(three)
-              else
-                State.Terminate(true)
-          | Mystream.End         -> State.Terminate(true)
-        else
-          State.Terminate(false) 
+  let rec one (c : char) (lookahead : char option) : State.state =
+    if (is_digit c) then
+      match lookahead with 
+        Some(c') ->
+          if (is_digit c') || (c' = '.') then
+            State.State(one)
+          else
+            State.Terminate(true)
+      | None -> State.Terminate(true)
+    else if c = '.' then
+      match lookahead with
+        Some(c') ->
+          if (is_digit c') then
+            State.State(two)
+          else
+            State.Terminate(false)
+      | None -> State.Terminate(false)
+    else
+      State.Terminate(false)
+  and two (c : char) (lookahead : char option) : State.state =
+    if (is_digit c) then
+      match lookahead with 
+        Some(c') ->
+          if (is_digit c') then
+            State.State(three)
+          else
+            State.Terminate(true)
+      | None -> State.Terminate(true)
+    else
+      State.Terminate(false)
+  and three (c : char) (lookahead : char option) : State.state =
+    if (is_digit c) then
+      match lookahead with 
+        Some(c') ->
+          if (is_digit c') then
+            State.State(three)
+          else
+            State.Terminate(true)
+      | None         -> State.Terminate(true)
+    else
+      State.Terminate(false) 
   in
-  match s with
-    Mystream.End -> State.Terminate(false)
-  | _            -> one s
-
+    (State.State(one), [one; three])

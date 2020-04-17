@@ -12,44 +12,32 @@
   Please see test_id.ml to see how this scanner is used.
 *)
 
-let id (s : char Mystream.mystream) : State.state =
+let id () : State.state * ((char -> char option -> State.state) list) =
   let is_alpha c = (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
   and is_digit c = (c >= '0' && c <= '9') in
   let is_alphanum c = (is_alpha c) || (is_digit c) in
-  let rec one (stream : char Mystream.mystream) : State.state =
-    match stream with
-      Mystream.End -> State.Terminate(false)
-    | Mystream.Cons(c, _) ->
-        let lookahead = (Mystream.tl stream) () in
-        if is_alpha c then
-          match lookahead with
-            Mystream.Cons(c', _) ->
-              if (is_alphanum c') then     
-                State.State(two)
-              else
-                State.Terminate(true)
-          | Mystream.End ->
-              State.Terminate(true)
-        else
-          State.Terminate(false)
-
-  and two  (stream : char Mystream.mystream) : State.state =
-    match stream with
-      Mystream.End -> State.Terminate(true)
-    | Mystream.Cons(c, _) ->
-        let lookahead = (Mystream.tl stream) () in
-        if (is_alphanum c) then
-           match lookahead with
-            Mystream.Cons(c', _) ->
-              if (is_alphanum c') then     
-                State.State(two)
-              else
-                State.Terminate(true)
-          | Mystream.End -> State.Terminate(true)
-      else
-        State.Terminate(true)
+  let rec one (c : char) (lookahead : char option) : State.state =
+    if is_alpha c then
+      match lookahead with
+        Some(c') ->
+          if (is_alphanum c') then     
+            State.State(two)
+          else
+            State.Terminate(true)
+      | None ->
+          State.Terminate(true)
+    else
+      State.Terminate(false)
+  and two  (c : char) (lookahead : char option) : State.state =
+    if (is_alphanum c) then
+      match lookahead with
+        Some(c') ->
+           if (is_alphanum c') then     
+             State.State(two)
+           else
+             State.Terminate(true)
+          | None -> State.Terminate(true)
+    else
+      State.Terminate(true)
   in
-  match s with
-    Mystream.End -> State.Terminate(false)
-  | _ -> one s
-
+  (State.State(one), [two])
