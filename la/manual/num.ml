@@ -17,7 +17,8 @@
   the appropriate token among those found in the input stream. This job is
   rightfully of the lexical analyser, and not the FSAs it invokes. To achieve this,
   instead of making a mutually recursive call to the other state function,
-  it returns a thunk encapsulating a call to that other state function.
+  it returns the function (unevaluated) that represents the state to which the
+  transition is happening.
 
   THE state TYPE.
   The state type is used as the return type of the functions so that the
@@ -28,9 +29,11 @@
     execution of the FSA. The termination of execution may itself happen in two
     ways:
     * success. This means that the current lexeme was successfully consumed. In which
-      case Termination(true) is returned;
-    * failure. This means that the current lexeme wasn't successfully consumed. It doesn't
-      belong the token class of this FSA. In which case Termination(false) is returned.
+      case Termination(true) is returned. This also means that the state is an
+      accepting state.
+    * failure. This means that the current lexeme wasn't successfully consumed.
+      It doesn't belong the token class of this FSA. In which case 
+      Termination(false) is returned.
 
   LOOKAHEAD.
   The lexical analyser typical doesn't have the luxury of making a lot of back-n-forth

@@ -1,12 +1,13 @@
 (*
-  The following scanner implements the scanner to scan identifiers. Identifiers in this language
-  are strings have a leading alphabetic character, followed by zero or more alphanumeric 
-  characters. For example:
+  The following scanner implements the scanner to scan identifiers. Identifiers
+  in this language are strings have a leading alphabetic character, followed by
+  zero or more alphanumeric characters. For example:
   - Valid inputs: "A"; "Aa"; "AaA"; "A1"; "Aa1"; "A1a"; "a1"; 
   - Invalid inputs: "1a"; "a_b"
 
-  Please see num.ml for detailed notes on design of the scanner. id scanner has exactly the
-  same design as the scanner for numbers in num.ml except the FSA it implements.
+  Please see num.ml for detailed notes on design of the scanner. id scanner has
+  exactly the same design as the scanner for numbers in num.ml except the FSA
+  it implements.
 
   USAGE
   Please see test_id.ml to see how this scanner is used.
