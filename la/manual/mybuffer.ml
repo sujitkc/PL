@@ -23,7 +23,6 @@ let from_string s =
 
 let from_file fname =
   let fin      = open_in fname in
-  print_endline "here";
   let lookahead = ref (Some(input_char fin))
   and curr_char = ref None in
   let buffer () =
@@ -37,7 +36,6 @@ let from_file fname =
     with
       End_of_file ->
       begin
-        print_endline "EOF!";
         close_in fin;
         lookahead := None;
       end
