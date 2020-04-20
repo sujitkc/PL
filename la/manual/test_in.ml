@@ -1,14 +1,4 @@
 let test_in s =
-(*
-  let stream : (char Mystream.mystream) = Mystream.string_stream s in
-  let rec iter f str =
-    let result = f str in
-      match result with
-        State.Terminate(b) -> s, b
-      | State.State(st)    -> iter st ((Mystream.tl str) ())
-  in
-  iter In.keywd_in stream
-*)
   let buffer = Mybuffer.from_string s in
   let (init, accept_states) = In.keywd_in () in
   let rec loop sS = 
