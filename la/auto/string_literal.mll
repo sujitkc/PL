@@ -32,7 +32,11 @@ rule scan_words = parse
   | eof     { EOF  }
   | _       { scan_words lexbuf }
 and string_literal = parse
-  | "\""     { SL(!str_lit) }
+  | "\""     {
+               let s = !str_lit in
+               str_lit := "";
+               SL(s)
+             }
   | "\n"      { raise (Lexical_error "Newline in a string literal.")}
   | eof      { raise (Lexical_error "EOF within a string literal.")}
   | _ as c { str_lit := !str_lit ^ (Bytes.make 1 c); string_literal lexbuf }
