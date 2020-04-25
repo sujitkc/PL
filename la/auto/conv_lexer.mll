@@ -63,8 +63,8 @@ let reject_words_table =
   create_reject_words_table reject_words
     
 
-let read_all_words () =
-  let lexbuf = Lexing.from_channel stdin in
+let read_all_words fin =
+  let lexbuf = Lexing.from_channel fin in
   let rec read_next_word word_list =
     let next_token = (scan_words lexbuf) in
       match next_token with
@@ -96,7 +96,13 @@ let make_table word_list =
   table
 
 let main () =
-  let word_list = read_all_words () in
+  let fin =
+    if Array.length Sys.argv = 1 then
+      stdin
+    else
+      open_in Sys.argv.(1)
+  in
+  let word_list = read_all_words fin in
   let table = make_table word_list
   in
   print_table table;
