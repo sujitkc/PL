@@ -35,19 +35,24 @@ rule scan_words = parse
 
 {
 let print_table t =
-  (Hashtbl.iter (fun key value -> (Printf.printf "%s %d\n" key !value)) t)
+  (Hashtbl.iter (fun key value ->
+    (Printf.printf "%s %d\n" key !value)) t)
 
 let print_list l p = print_newline (); List.iter p l
 
 let sort_table t =
-  let assoc_list = (Hashtbl.fold (fun k v acc -> (k, !v) :: acc) t []) in
+  let assoc_list = (Hashtbl.fold
+                     (fun k v acc -> (k, !v) :: acc) t []) in
     List.sort
       (
-        fun (k1, v1) (k2, v2) -> if v1 > v2 then 1 else if v1 < v2 then -1 else 0
+        fun (k1, v1) (k2, v2) ->
+          if v1 > v2 then 1 else if v1 < v2 then -1 else 0
       ) assoc_list
 
-let reject_words = [ "let"; "the"; "is"; "for"; "I"; "in"; "on"; "upon"; "between"; "under"; "above"; "over";
-  "as"; "at"; "be"; "an"; "a"; "the"; "from"; "to"; "upto"; "am"; "was"; "would"; "could"; "should"; "shall" ]
+let reject_words = [ "let"; "the"; "is"; "for"; "I"; "in"; "on"; "upon";
+  "between"; "under"; "above"; "over";
+  "as"; "at"; "be"; "an"; "a"; "the"; "from"; "to"; "upto"; "am"; "was";
+  "would"; "could"; "should"; "shall" ]
 
 let reject_words_table =
   let table = Hashtbl.create 30 in
