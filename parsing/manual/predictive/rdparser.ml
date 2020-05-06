@@ -1,9 +1,3 @@
-type expr =
-    Num      of int
-  | Add      of expr * expr
-  | Subtract of expr * expr
-  | Paren    of expr
-
 (*
 Grammar:
 
@@ -104,10 +98,6 @@ let test_rdparser s =
   Printf.printf "%s -> %b\n" s (expr lexbuf)
 
 let test_all () =
-  let rec iter = function
-      [] -> ()
-    | h :: t -> (test_rdparser h); (iter t)
-  in
-  iter tss
+  List.iter test_rdparser tss
 
 let _ = test_all ()

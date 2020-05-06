@@ -21,10 +21,6 @@ let test_parser s =
 
 
 let test_all () =
-  let rec iter = function
-      [] -> ()
-    | h :: t -> (test_parser h); (iter t)
-  in
-  iter tss
+  List.iter test_parser tss
 
 let _ = test_all ()

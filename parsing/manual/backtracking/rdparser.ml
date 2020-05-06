@@ -10,7 +10,7 @@ type result =
 
 let string_of_result = function
     Success(_) -> "Success"
-  | Failure -> "Failure"
+  | Failure    -> "Failure"
 
 let parse inp =
   let rec parse_S pos =
@@ -24,13 +24,15 @@ let parse inp =
           else
             Failure
       | Failure ->
+        begin
           match (parse_A2 (pos + 1)) with
             Success(pos') ->
               if (Bytes.get inp (pos' + 1)) = 'd' then
                 Success (pos' + 1)
               else
                 Failure
-         | Failure -> Failure
+          | Failure -> Failure
+        end
     end
     else
       Failure
@@ -56,10 +58,12 @@ let parse inp =
     Invalid_argument(_) -> Failure
 
 let test inp =
-   print_endline ("********** Parsing " ^ inp ^ " ***********");
-   print_endline (inp ^ " --> " ^ (string_of_result (parse inp)));
-   print_endline "*********************"
-
+   let result = (string_of_result (parse inp)) in
+   begin
+     print_endline ("********** Parsing " ^ inp ^ " ***********");
+     print_endline (inp ^ " --> " ^ result);
+     print_endline "*********************"
+   end
 
 let main () =
   test "cabd";
