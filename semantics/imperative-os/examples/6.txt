@@ -1,0 +1,21 @@
+{
+  int x;
+  boolean y;
+}
+
+int f() {
+  { int x; }
+  x := 10;
+  {
+    { int a; }
+    a := 1;
+  }
+  return x + a;
+}
+
+{
+  {}
+  x := 20;
+  return x + f();
+}
+
