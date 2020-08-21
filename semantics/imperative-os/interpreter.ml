@@ -31,6 +31,9 @@ let rec string_of_expr = function
   | Expression.And(e1, e2)        -> 
       "(" ^ (string_of_expr e1) ^ ") and (" ^
       (string_of_expr e2) ^ ")"
+  | Expression.LT(e1, e2)        -> 
+      "(" ^ (string_of_expr e1) ^ ") < (" ^
+      (string_of_expr e2) ^ ")"
   | Expression.Equals(e1, e2)     -> "(" ^
       (string_of_expr e1) ^ ") = (" ^ (string_of_expr e2) ^ ")"
   | Expression.FunCall(_, _)      -> "function call"
@@ -44,6 +47,8 @@ let rec string_of_stmt = function
     | Expression.Block(decls, slist) -> "{\n" ^
         (List.fold_left (fun x y -> x ^
         (string_of_stmt y) ^ "\n") "" slist) ^ "}"
+    | Expression.While(c, s) ->
+      "while(" ^ (string_of_expr c) ^ ") " ^ (string_of_stmt s)
 
 let string_of_decl (vname, ty) =
   (string_of_typ ty) ^ " " ^ vname
@@ -164,6 +169,16 @@ let rec evaluate_expr e env fenv =
             (Some(Expression.BoolConst(b1 && b2)), env2)
         | _ -> raise (TypeError("Type error in " ^ (string_of_expr e)))
       end
+  | Expression.LT(e1, e2) ->
+      let (t1, env1) = evaluate_expr e1 env fenv in
+      let (t2, env2) = evaluate_expr e2 env1 fenv in
+      begin
+        match (t1, t2) with
+          (Some(Expression.IntConst(i1)), Some(Expression.IntConst(i2))) ->
+            (Some(Expression.BoolConst(i1 < i2)), env2)
+        | _ -> raise (TypeError("Type error in " ^ (string_of_expr e))) 
+      end
+
   | Expression.Equals(e1, e2) ->
       let (t1, env1) = evaluate_expr e1 env fenv in
       let (t2, env2) = evaluate_expr e2 env1 fenv in
@@ -234,21 +249,37 @@ and evaluate_stmt stmt env fenv =
         | _ ->  raise (TypeError("Type error in " ^ (string_of_stmt stmt)))
       end
   | Expression.Return(e) -> evaluate_expr e env fenv
-  | Expression.Block(decls, stmt_list) ->
+  | Expression.Block(decls, stmt_list) -> evaluate_block stmt env fenv
+  | Expression.While(c, s) ->
+      let tf, env' = evaluate_expr c env fenv in
+      if tf = Some(Expression.BoolConst(true)) then
+        let v, env'' = evaluate_stmt s env fenv in
+        match v with
+          None -> evaluate_stmt stmt env'' fenv
+        | Some(_) -> (v, env'')
+      else if tf = Some(Expression.BoolConst(false)) then
+        (None, env')
+      else
+         raise (TypeError("Type error in condition of while loop." ^ (string_of_stmt stmt))) 
+
+and evaluate_block block env fenv =
+  match block with
+    Expression.Block(decls, stmt_list) ->
       let env' = Environment.enter_scope env in
       let env'' = evaluate_declarations decls env' in
-      let (v, env''') = evaluate_stmtblock stmt_list env'' fenv in
+      let (v, env''') = evaluate_stmtlist stmt_list env'' fenv in
       let env'''' = Environment.exit_scope env''' in
       (v, env'''')
+ | _ -> failwith "evaluate_block: statement type not supported." 
 
-and evaluate_stmtblock block env fenv =
-  match block with
+and evaluate_stmtlist stmtlist env fenv =
+  match stmtlist with
     [] -> (None, env)
   | stmt :: tl ->
     begin
       let (v, env') = evaluate_stmt stmt env fenv in
         match v with
-          None -> evaluate_stmtblock tl env' fenv
+          None -> evaluate_stmtlist tl env' fenv
         | Some(_) -> (v, env')
     end
 

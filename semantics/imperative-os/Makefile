@@ -28,10 +28,13 @@ expression.cmx : expression.cmi expression.ml environment.cmi
 interpreter.cmi : expression.cmi environment.cmi interpreter.mli
 	ocamlc -c interpreter.mli
 
-interpreter.cmx : expression.cmi environment.cmi interpreter.cmi interpreter.ml
+interpreter.cmx : interpreter.cmi interpreter.ml
 	ocamlopt -c interpreter.ml
 
-evaluate.cmx :  parser.cmi lexer.cmx expression.cmi interpreter.cmi evaluate.ml
+evaluate.cmi :  parser.cmi lexer.cmx expression.cmi interpreter.cmi
+	ocamlopt -c evaluate.mli
+
+evaluate.cmx : evaluate.cmi evaluate.ml
 	ocamlopt -c evaluate.ml
 
 environment.cmx : environment.ml environment.cmi

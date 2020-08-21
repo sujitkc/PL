@@ -14,6 +14,7 @@ type expr =
   | Not       of expr
   | Or        of expr * expr
   | And       of expr * expr
+  | LT        of expr * expr
   | Equals    of expr * expr
   | FunCall   of string * expr list
   | Closure   of string list * stmt * (string, expr) Environment.environment *
@@ -24,6 +25,7 @@ and stmt =
   | Assignment of string * expr
   | Return of expr
   | Block of (string * typ) list * stmt list
+  | While of expr * stmt
 
 type fundef = {
   fname  : string;

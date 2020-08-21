@@ -2,8 +2,8 @@
 %}
 
 %token          NEWLINE WS COMMA EOF LPAREN RPAREN LBRACE RBRACE SEMICOLON ASSIGN COLON
-%token          IF THEN ELSE LET IN RETURN
-%token          ADD SUBTRACT EQ
+%token          IF THEN ELSE LET IN WHILE RETURN
+%token          ADD SUBTRACT EQ LT
 %token          AND OR NOT
 %token <int>    INTEGER
 %token <string> ID
@@ -95,6 +95,7 @@ stmt :
     ID ASSIGN expr SEMICOLON         { Expression.Assignment($1, $3) }
   | RETURN expr SEMICOLON            { Expression.Return($2)         }
   | LBRACE decls stmts RBRACE        { Expression.Block($2, $3)      }
+  | WHILE LPAREN expr RPAREN stmt    { Expression.While($3, $5)      }
   ;
 
 expr :
@@ -106,6 +107,7 @@ expr :
   | IF expr THEN expr ELSE expr      { Expression.If($2, $4, $6)     }
   | expr AND expr                    { Expression.And($1, $3)        }
   | expr OR expr                     { Expression.Or($1, $3)         }
+  | expr LT expr                     { Expression.LT($1, $3)         }
   | NOT expr                         { Expression.Not($2)            }
   | expr EQ expr                     { Expression.Equals($1, $3)     }
   | LET ID EQ expr IN expr           { Expression.Let($2, $4, $6)    }

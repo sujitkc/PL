@@ -2,11 +2,20 @@
 int x;
 boolean y;
 }
+
 int f() {
+  {}
   x := 1;
   return x + 1;
 }
 
-int g(boolean x) {
-  return x;
+int g(int x) {
+  {}
+  return x + 2;
+}
+
+{
+{}
+  x := 10;
+  return g(x) + f();
 }
