@@ -3,13 +3,13 @@ exception End_of_buffer
 let from_string s =
   let pos = ref 0 in
   let buffer () =
-    if !pos = Bytes.length s then
+    if !pos = String.length s then
       raise End_of_buffer
     else
     begin
       let c = s.[!pos]
       and lookahead =
-        if !pos < (Bytes.length s) - 1 then
+        if !pos < (String.length s) - 1 then
           Some(s.[!pos + 1])
         else
           None in

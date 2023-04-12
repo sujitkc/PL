@@ -8,7 +8,7 @@ let test_from_string () =
       let str_la =
       match la with
         None -> "nil"
-      | Some(c') -> Bytes.make 1 c' in
+      | Some(c') -> String.make 1 c' in
       begin
         Printf.printf "Current character = %c, lookahead = %s\n" c str_la;
         loop ()
@@ -27,7 +27,7 @@ let test_from_file () =
       let str_la =
       match la with
         None -> "nil"
-      | Some(c') -> Bytes.make 1 c' in
+      | Some(c') -> String.make 1 c' in
       begin
         Printf.printf "Current character = %c, lookahead = %s\n" c str_la;
         loop ()
