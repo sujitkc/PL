@@ -39,7 +39,7 @@ and string_literal = parse
              }
   | "\n"      { raise (Lexical_error "Newline in a string literal.")}
   | eof      { raise (Lexical_error "EOF within a string literal.")}
-  | _ as c { str_lit := !str_lit ^ (Bytes.make 1 c); string_literal lexbuf }
+  | _ as c { str_lit := !str_lit ^ (String.make 1 c); string_literal lexbuf }
 
 (* Part 2 - end *)
 
