@@ -8,39 +8,48 @@
 using namespace std;
 
 namespace ast {
-/*
-class SymbolTable {
+class Type {
     private:
-        SymbolTable *parent;
-        vector<SymbolTable *> children;
-        map<string, int> table;
+        const string name;
+    Type *instance();
+    protected:
+        Type(string);
+    virtual Type *createInstance() = 0;
     public:
-        SymbolTable(SymbolTable *p);
-        SymbolTable();
-        int get(string);
-        void set(string, int); // will work only on existing variables.
-        void add(string, int); // will add/modify an entry on the curren table;
-                   // will not recurse to its parent if not found.
-        void print();
-        ~SymbolTable();
+        Type *getInstance();
 };
-*/
 
-class SymbolTable {
+class IntType : public Type {
+    protected:
+        IntType();
+    virtual Type *createInstance();
+};
+
+class BoolType : public Type {
+    protected:
+        BoolType();
+    virtual Type *createInstance();
+};
+
+class Declaration {
     private:
-        map<string, int> table;
+        string variable;
+        Type *type;
     public:
-        SymbolTable();
-        int get(string);
-        void set(string, int); // will work only on existing variables.
-        void print();
-        ~SymbolTable();
+        Declaration(string, Type *);
+};
+
+class DeclarationList {
+    private:
+        vector<Declaration *> declarations;
+    public:
+        DeclarationList(vector<Declaration *>);
+        void addDeclaration(Declaration *);
 };
 
 
 class Expression {
     public:
-        virtual int evaluate() = 0;
         virtual ~Expression() = 0;
 };
 
@@ -48,14 +57,12 @@ class Num : public Expression {
     public:
         const int value;
         Num(int v);
-        virtual int evaluate();
 };
 
 class Var : public Expression {
     public:
         const string name;
         Var(string n);
-        virtual int evaluate();
 };
 
 class BinaryExpression : public Expression {
@@ -71,25 +78,30 @@ class BinaryExpression : public Expression {
 class AddExpression : public BinaryExpression {
     public:
         AddExpression(Expression *l, Expression *r);
-        virtual int evaluate();
 };
 
 class SubExpression : public BinaryExpression {
     public:
         SubExpression(Expression *l, Expression *r);
-        virtual int evaluate();
 };
 
 class MulExpression : public BinaryExpression {
     public:
         MulExpression(Expression *l, Expression *r);
-        virtual int evaluate();
 };
 
 class DivExpression : public BinaryExpression {
     public:
         DivExpression(Expression *l, Expression *r);
-        virtual int evaluate();
+};
+
+class FunctionCall : public Expression {
+    private:
+        string name;
+        vector<Expression *> arguments;
+    public:
+        FunctionCall(string, vector<Expression *>);
+        virtual ~FunctionCall();
 };
 
 class Statement {
@@ -117,16 +129,61 @@ class SequenceStatement : public Statement {
         virtual ~SequenceStatement();
 };
 
+class BlockStatement : public Statement {
+    private:
+        DeclarationList *declarations;
+        Statement *statement;
+    public:
+        BlockStatement(DeclarationList *, Statement *);
+        virtual ~BlockStatement();
+};
+
+class FunctionDefinition {
+    private:
+        Type *returnType;
+        string name;
+        DeclarationList *parameters;
+        BlockStatement *body;
+
+    public:
+        FunctionDefinition(Type *, string, DeclarationList *, BlockStatement *);
+        virtual ~FunctionDefinition();
+};
+
+class FunctionDefinitionList {
+    private:
+        vector<FunctionDefinition *> functionDefinitions;
+    public:
+        FunctionDefinitionList(vector<FunctionDefinition *>);
+        virtual ~FunctionDefinitionList();
+};
+
+class SymbolTable {
+    private:
+        map<string, int> table;
+    SymbolTable *parent;
+    public:
+        SymbolTable(SymbolTable *parent);
+	SymbolTable *getParent();
+        int get(string);
+        void set(string, int); // will work only on existing variables.
+        void print();
+        ~SymbolTable();
+};
+
 class Program {
     private:
         string name;
+        DeclarationList *declarations;
+        FunctionDefinitionList *functionDefinitions;
         Statement *statement;
         SymbolTable *symbolTable;
     public:
-        Program(string, Statement *);
+        Program(string, DeclarationList *, FunctionDefinitionList *, Statement *);
         string getName();
         SymbolTable& getSymbolTable();
-        void run();
+	void enterScope();
+	void exitScope();
         ~Program();
 };
 
