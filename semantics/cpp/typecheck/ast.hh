@@ -8,49 +8,54 @@
 using namespace std;
 
 namespace ast {
-class Type {
-    private:
-        const string name;
-    Type *instance();
-    protected:
-        Type(string);
-    virtual Type *createInstance() = 0;
-    public:
-        Type *getInstance();
+
+enum Type {
+    INT,
+    BOOL,
+    VOID,
+    NIL
 };
 
-class IntType : public Type {
-    protected:
-        IntType();
-    virtual Type *createInstance();
+enum ExpressionType {
+    EMPTY,
+    VAR,
+    NUM,
+    BINARY,
+    FUNCTIONCALL
 };
 
-class BoolType : public Type {
-    protected:
-        BoolType();
-    virtual Type *createInstance();
+enum StatementType {
+    SKIP,
+    ASSIGN,
+    BRANCH,
+    LOOP,
+    SEQUENCE,
+    BLOCK,
+    RETURN
 };
+
 
 class Declaration {
     private:
         string variable;
-        Type *type;
+        Type type;
     public:
-        Declaration(string, Type *);
+        Declaration(string, Type);
+        string getVariable();
+        Type getType();
 };
-
-class DeclarationList {
-    private:
-        vector<Declaration *> declarations;
-    public:
-        DeclarationList(vector<Declaration *>);
-        void addDeclaration(Declaration *);
-};
-
 
 class Expression {
     public:
+        const ExpressionType exprtype;
+    public:
+        Expression(ExpressionType);
         virtual ~Expression() = 0;
+};
+
+class Empty : public Expression {
+    public:
+        Empty();
 };
 
 class Num : public Expression {
@@ -73,6 +78,8 @@ class BinaryExpression : public Expression {
     public:
         BinaryExpression(Expression *l, Expression *r);
         virtual ~BinaryExpression();    
+        Expression& getLeft();
+        Expression& getRight();
 };
 
 class AddExpression : public BinaryExpression {
@@ -101,13 +108,23 @@ class FunctionCall : public Expression {
         vector<Expression *> arguments;
     public:
         FunctionCall(string, vector<Expression *>);
+        string getName();
+        vector<Expression *> getArguments();
         virtual ~FunctionCall();
 };
 
 class Statement {
     public:
-        virtual void run() = 0;
+        const StatementType stmttype;
+    public:
+        Statement(StatementType);
         virtual ~Statement() = 0;
+};
+
+class SkipStatement : public Statement {
+    public:
+        SkipStatement();
+        virtual ~SkipStatement();
 };
 
 class AssignmentStatement : public Statement {
@@ -115,38 +132,81 @@ class AssignmentStatement : public Statement {
         string variable;
         Expression *expression;
     public:
-        void run();
         AssignmentStatement(string, Expression *);
         virtual ~AssignmentStatement();
+        string getVariable();
+        Expression *getExpression();
 };
 
 class SequenceStatement : public Statement {
     private:
         vector<Statement *> statements;
     public:
+    SequenceStatement(vector<Statement *>);
+    SequenceStatement();
         void addStatement(Statement *s);
-        void run();
+        vector<Statement *>& getStatements();
         virtual ~SequenceStatement();
+};
+
+class BranchStatement : public Statement {
+    private:
+        Expression *condition;
+        Statement *thenStatement;
+        Statement *elseStatement;
+    public:
+        BranchStatement(Expression *, Statement *, Statement *);
+        Expression& getCondition();
+        Statement& getThenStatement();
+        Statement& getElseStatement();
+        virtual ~BranchStatement();
+};
+
+class LoopStatement : public Statement {
+    private:
+        Expression *condition;
+        Statement *body;
+    public:
+        LoopStatement(Expression *, Statement *);
+        Expression& getCondition();
+        Statement& getBody();
+        virtual ~LoopStatement();
 };
 
 class BlockStatement : public Statement {
     private:
-        DeclarationList *declarations;
+        vector<Declaration *> declarations;
         Statement *statement;
     public:
-        BlockStatement(DeclarationList *, Statement *);
+        BlockStatement(vector<Declaration *>&, Statement *);
+        BlockStatement(Statement *);
+        vector<Declaration *>& getDeclarations();
+        Statement& getStatement();
         virtual ~BlockStatement();
+};
+
+class ReturnStatement : public Statement {
+    private:
+        Expression *expression;
+    public:
+        ReturnStatement(Expression *);
+        Expression& getExpression();
+        virtual ~ReturnStatement();
 };
 
 class FunctionDefinition {
     private:
-        Type *returnType;
+        Type returnType;
         string name;
-        DeclarationList *parameters;
+        vector<Declaration *> parameters;
         BlockStatement *body;
 
     public:
-        FunctionDefinition(Type *, string, DeclarationList *, BlockStatement *);
+        FunctionDefinition(string, Type, vector<Declaration *>&, BlockStatement *);
+        Type getReturnType();
+        string getName();
+        vector<Declaration *>& getParameters();
+        BlockStatement& getBody();
         virtual ~FunctionDefinition();
 };
 
@@ -158,32 +218,20 @@ class FunctionDefinitionList {
         virtual ~FunctionDefinitionList();
 };
 
-class SymbolTable {
-    private:
-        map<string, int> table;
-    SymbolTable *parent;
-    public:
-        SymbolTable(SymbolTable *parent);
-	SymbolTable *getParent();
-        int get(string);
-        void set(string, int); // will work only on existing variables.
-        void print();
-        ~SymbolTable();
-};
-
 class Program {
     private:
         string name;
-        DeclarationList *declarations;
-        FunctionDefinitionList *functionDefinitions;
-        Statement *statement;
-        SymbolTable *symbolTable;
+        vector<Declaration *> declarations;
+        vector<FunctionDefinition *> functionDefinitions;
+        Statement *statement; 
+
     public:
-        Program(string, DeclarationList *, FunctionDefinitionList *, Statement *);
+        Program(string, vector<Declaration *>&, vector<FunctionDefinition *>&, Statement *);
+        Program();
         string getName();
-        SymbolTable& getSymbolTable();
-	void enterScope();
-	void exitScope();
+        vector<Declaration *>& getDeclarations();
+        vector<FunctionDefinition *>& getFunctionDefs();
+        Statement& getStatement();
         ~Program();
 };
 

@@ -1,13 +1,16 @@
 CC=g++ -g
 
-test_ast : test_ast.o ast.o
-	$(CC) -o test_ast test_ast.o ast.o
+driver : driver.o typechecker.o ast.o
+	$(CC) -o driver driver.o typechecker.o ast.o
+
+driver.o : driver.cc ast.hh
+	$(CC) -c driver.cc
+
+typechecker.o : typechecker.cc typechecker.hh ast.hh
+	$(CC) -c typechecker.cc
 
 ast.o : ast.cc ast.hh
 	$(CC) -c ast.cc
 
-test_ast.o : test_ast.cc ast.hh
-	$(CC) -c test_ast.cc
-
 clean :
-	rm *.o test_ast
+	rm *.o driver
