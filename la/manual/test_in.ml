@@ -15,7 +15,7 @@ let test_in s =
 
 
 let test_ins () =
-  let n = [ "in"; "int"; "in "; "A1" ] in
+        let n = [ "in"; "int"; "in "; "in_"; "A1" ] in
   let result = List.map test_in n in
     List.iter (fun (x, y) -> (Printf.printf "%s -> %b;\n" x y)) result
 
